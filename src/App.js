@@ -1,35 +1,61 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
-import "./styles.css";
+import React, { useEffect, useReducer } from "react";
 
+function reducer(state, action) {
+  switch (action.type) {
+    case "loading":
+      return {
+        loading: true,
+        users: null,
+        error: null
+      };
+    case "success":
+      return {
+        loading: false,
+        users: action.data,
+        error: null
+      };
+    case "error":
+      return {
+        loading: false,
+        users: null,
+        error: action.error
+      };
+    default:
+      throw new Error("뭐가 틀린겨");
+  }
+}
 export default function App() {
-  const [users, setUser] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
+  const [state, dispatch] = useReducer(reducer, {
+    loading: false,
+    users: null,
+    error: null
+  });
   const fetchApi = async () => {
+    dispatch({ type: "loading" });
+    console.log(state);
     try {
-      setUser(null);
-      setLoading(true);
-      setError(null);
       const response = await axios.get(
         "https://jsonplaceholder.typicode.com/users"
       );
-      setUser(response.data);
+      dispatch({ type: "success", data: response.data });
+      console.log(state);
     } catch (e) {
-      setError(e);
+      dispatch({ tpye: "error", error: e });
     }
-    setLoading(false);
   };
-  useEffect(() => fetchApi(), []);
-  if (loading) return <div>로딩중...</div>;
-  if (error) return <div>에러 발생</div>;
-  if (!users) return null;
+  useEffect(() => {
+    fetchApi();
+  }, []);
+  if (state.loading) return <div>로딩중...</div>;
+  if (state.error) return <div>오류 발생 ㅠㅠ</div>;
+  if (!state.users) return <div>값이 없나봐유</div>;
   return (
     <div>
-      {users.map((user) => (
+      {state.users.map((user) => (
         <li key={user.id}>{user.name}</li>
       ))}
+      <button onClick={() => fetchApi()}>새로 고침</button>
     </div>
   );
 }
