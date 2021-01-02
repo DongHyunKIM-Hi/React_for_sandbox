@@ -3,6 +3,7 @@ import React from "react";
 import Home from "./Home";
 import { Link, Route } from "react-router-dom";
 import About from "./About";
+import Profile from "./Profile";
 export default function App() {
   return (
     <div>
@@ -15,6 +16,7 @@ export default function App() {
       <hr />
       <Route path="/" component={Home} exact />
       <Route path="/about" component={About} />
+      <Route path="/profile/:name" component={Profile} />
     </div>
   );
 }
