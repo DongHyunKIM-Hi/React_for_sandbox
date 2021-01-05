@@ -5,8 +5,8 @@ import { onDecrease, onIncrease, onSetDiff } from "../modules/counter";
 
 export default function CounterContainer() {
   const { number, diff } = useSelector((state) => ({
-    number: state.number,
-    diff: state.diff
+    number: state.counter.number,
+    diff: state.counter.diff
   }));
   const dispatch = useDispatch();
   const Increase = () => dispatch(onIncrease());
